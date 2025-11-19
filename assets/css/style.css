@@ -1,0 +1,54 @@
+﻿html, body { height: 100%; margin: 0; font-family: system-ui, Arial, sans-serif; }
+#map { height: 100%; }
+.leaflet-container { background: #f3f6f9; }
+
+/* Panel de sombreado */
+.panel {
+  position: absolute; z-index: 1000; top: 14px; left: 14px;
+  background: #fff; border: 2px solid #2b8cbe; border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.15); padding: 12px 12px 8px; width: 230px;
+}
+.panel h4 { margin: 0 0 8px 0; font-size: 14px; }
+.legend-row{display:flex;align-items:center;gap:8px;margin:6px 0;cursor:pointer;font-size:13px;}
+.legend-dot{width:14px;height:14px;border-radius:50%;border:2px solid #2b8cbe;}
+.btn { background:#2b8cbe; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
+.btn:disabled { opacity:.6; cursor:default; }
+
+/* Popup más lindo */
+.leaflet-popup-content { margin: 10px 14px; }
+.popup-title { font-weight: 700; font-size: 24px; text-align:center; margin-top:4px; }
+.popup-sub { text-align:center; font-size: 11px; color:#444; margin-bottom:8px; }
+
+/* Logos institucionales fijos arriba del mapa */
+#logos-container {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+
+  backdrop-filter: blur(4px);
+}
+
+#logos-container .logo {
+  height: 100px;       /* Tamaño ajustable */
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  #logos-container .logo {
+    height: 38px;
+  }
+  #logos-container {
+    gap: 12px;
+    padding: 6px 10px;
+  }
+}
