@@ -4,7 +4,7 @@
 
 /* Panel de sombreado */
 .panel {
-  position: absolute; z-index: 1000; top: 14px; left: 14px;
+  position: absolute; z-index: 1000; top: 14px; right: 14px;
   background: #fff; border: 2px solid #2b8cbe; border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0,0,0,.15); padding: 12px 12px 8px; width: 230px;
 }
@@ -51,4 +51,25 @@
     gap: 12px;
     padding: 6px 10px;
   }
+}
+
+/* Texto cinematográfico inicial */
+#intro-text {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 32px;
+  font-weight: 600;
+  text-shadow: 0 0 12px black;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  z-index: 2000;
+}
+
+/* Ocultar panel y logos al inicio */
+#panel, #logos-container {
+  opacity: 0;
+  transition: opacity 1.5s ease;
 }

@@ -3,18 +3,52 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mapa de Sectores – Dashboard</title>
+  <title>Mapa de Sectores – Dashboard EAAB-Uniandes</title>
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
+
+  <!-- Texto cinematográfico inicial -->
+  <div id="intro-text">Cargando Dashboard EAAB – Uniandes…</div>
+
+  <!-- Logos institucionales arriba -->
   <div id="logos-container">
     <img src="assets/img/logo_andes.png" class="logo logo-andes" />
     <img src="assets/img/logo_eaab.jpg" class="logo logo-eaab" />
   </div>
-  <div id="panel" class="panel"></div>
+
+  <!-- Panel de sombreado -->
+  <div id="panel" class="panel">
+    <h4>Sombrear por</h4>
+
+    <div class="legend-row" data-indicador="Submedición (Mm³/año)">
+      <div class="legend-dot" style="background:#2b8cbe"></div>
+      <span>Submedición</span>
+    </div>
+
+    <div class="legend-row" data-indicador="Errores en el manejo de datos (Mm³/año)">
+      <div class="legend-dot" style="background:#fdae61"></div>
+      <span>Errores / Fallas catastro</span>
+    </div>
+
+    <div class="legend-row" data-indicador="Consumo no autorizado (Mm³/año)">
+      <div class="legend-dot" style="background:#1a9850"></div>
+      <span>Consumo no autorizado</span>
+    </div>
+
+    <div class="legend-row" data-indicador="Pérdidas técnicas (Mm³/año)">
+      <div class="legend-dot" style="background:#d73027"></div>
+      <span>Fugas técnicas</span>
+    </div>
+  </div>
+
+  <!-- Mapa -->
   <div id="map"></div>
 
+  <!-- Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="assets/js/app.js"></script>
