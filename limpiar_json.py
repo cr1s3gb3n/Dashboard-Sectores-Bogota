@@ -1,54 +1,55 @@
 import json
-import math
-import os
+import re
 
 INPUT = "data/dashboard_data.json"
-OUTPUT = "data/dashboard_data.json"   # sobrescribe el original
+OUTPUT = "data/dashboard_data_limpio.json"
 
-def limpiar_valor(v):
-    """
-    Convierte valores no válidos de JSON:
-    - NaN, Infinity, -Infinity  → None
-    - Cadenas "NaN" → None
-    """
-    if isinstance(v, float):
-        if math.isnan(v) or math.isinf(v):
-            return None
-        return v
+print("🔧 Limpiando nombres de columnas...")
 
-    if isinstance(v, str):
-        if v.strip().lower() in ["nan", "inf", "infinity", "-inf", "-infinity"]:
-            return None
-        return v
-
-    return v
-
-def limpiar_json(data):
-    """
-    Recorre recursivamente todo el JSON
-    y reemplaza valores inválidos.
-    """
-    if isinstance(data, dict):
-        return {k: limpiar_json(v) for k, v in data.items()}
-
-    if isinstance(data, list):
-        return [limpiar_json(v) for v in data]
-
-    return limpiar_valor(data)
-
-
-print("Cargando archivo JSON...")
 with open(INPUT, "r", encoding="utf-8") as f:
     data = json.load(f)
 
-print("Limpiando valores (NaN, Infinity, etc.)...")
-data_limpio = limpiar_json(data)
+def normalizar_clave(clave):
+    original = clave
 
-print("Guardando JSON limpio...")
+    # Corregir Pérdidas Técnicas
+    clave = clave.replace("ténicas", "técnicas")
+    clave = clave.replace("técnicas (Mm3/año)", "técnicas (Mm³/año)")
+
+    # Estandarizar AMSI
+    clave = clave.replace("AMSI (m3/día/km/mca)", "AMSI")
+
+    # Estandarizar unidades Mm3 → Mm³
+    clave = clave.replace("Mm3", "Mm³")
+
+    # Otras normalizaciones posibles
+    clave = clave.strip()
+
+    if clave != original:
+        print(f"✔ Renombrada: '{original}' → '{clave}'")
+
+    return clave
+
+def convertir_num(valor):
+    if isinstance(valor, (int, float)):
+        return valor
+    try:
+        valor = valor.replace(",", "")
+        return float(valor)
+    except:
+        return valor
+
+nuevo = []
+
+for fila in data:
+    nueva = {}
+    for k, v in fila.items():
+        key = normalizar_clave(k)
+        nueva[key] = convertir_num(v)
+    nuevo.append(nueva)
+
 with open(OUTPUT, "w", encoding="utf-8") as f:
-    json.dump(data_limpio, f, indent=2, ensure_ascii=False)
+    json.dump(nuevo, f, ensure_ascii=False, indent=2)
 
-print("\n======================================")
-print("✔ JSON limpiado correctamente")
-print(f"✔ Guardado en: {OUTPUT}")
-print("======================================\n")
+print("\n🎉 JSON limpio generado con éxito →", OUTPUT)
+print("Registros:", len(nuevo))

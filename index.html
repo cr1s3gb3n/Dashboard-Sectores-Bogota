@@ -14,43 +14,136 @@
   <!-- Texto cinematográfico inicial -->
   <div id="intro-text">Cargando Dashboard EAAB – Uniandes…</div>
 
-  <!-- Logos institucionales arriba -->
+  <!-- Logos institucionales -->
   <div id="logos-container">
     <img src="assets/img/logo_andes.png" class="logo logo-andes" />
     <img src="assets/img/logo_eaab.jpg" class="logo logo-eaab" />
   </div>
 
-  <!-- Panel de sombreado -->
+  <!-- PANEL LATERAL CORRECTO -->
   <div id="panel" class="panel">
-    <h4>Sombrear por</h4>
 
-    <div class="legend-row" data-indicador="Submedición (Mm³/año)">
-      <div class="legend-dot" style="background:#2b8cbe"></div>
-      <span>Submedición</span>
+    <!-- Título del sector -->
+    <h4>Sector seleccionado:</h4>
+    <div id="sector-actual" class="sector-actual">Ninguno</div>
+
+    <hr>
+
+    <!-- Sombrear por indicador -->
+    <h4>Sombrear por indicador</h4>
+    <div id="sombrear-opciones">
+
+      <div class="legend-row" data-indicador="Submedición (Mm³/año)">
+        <div class="legend-dot" style="background:#2b8cbe"></div>
+        <span>Submedición</span>
+      </div>
+
+      <div class="legend-row" data-indicador="Errores en el manejo de datos (Mm³/año)">
+        <div class="legend-dot" style="background:#fdae61"></div>
+        <span>Errores / Fallas de catastro</span>
+      </div>
+
+      <div class="legend-row" data-indicador="Consumo no autorizado (Mm³/año)">
+        <div class="legend-dot" style="background:#1a9850"></div>
+        <span>Consumo no autorizado</span>
+      </div>
+
+      <div class="legend-row" data-indicador="Pérdidas técnicas (Mm³/año)">
+        <div class="legend-dot" style="background:#d73027"></div>
+        <span>Fugas técnicas</span>
+      </div>
+
+      <div class="legend-row" data-indicador="AMSI">
+        <div class="legend-dot" style="background:#6a51a3"></div>
+        <span>AMSI</span>
+      </div>
+
     </div>
 
-    <div class="legend-row" data-indicador="Errores en el manejo de datos (Mm³/año)">
-      <div class="legend-dot" style="background:#fdae61"></div>
-      <span>Errores / Fallas catastro</span>
+    <hr>
+
+    <!-- TABS -->
+    <div id="tabs">
+      <button class="tab active" data-tab="info">Información</button>
+      <button class="tab" data-tab="geo">Geográfico</button>
     </div>
 
-    <div class="legend-row" data-indicador="Consumo no autorizado (Mm³/año)">
-      <div class="legend-dot" style="background:#1a9850"></div>
-      <span>Consumo no autorizado</span>
-    </div>
+    <!-- CONTENIDO DE TABS -->
+    <div id="tab-content">
 
-    <div class="legend-row" data-indicador="Pérdidas técnicas (Mm³/año)">
-      <div class="legend-dot" style="background:#d73027"></div>
-      <span>Fugas técnicas</span>
+      <!-- Panel Información -->
+      <div class="tab-panel" id="tab-info">
+        <h4>Indicadores del Sector</h4>
+
+        <div id="kpi-container">
+
+          <div class="kpi">
+            <span class="kpi-label">VE (Mm³/año)</span>
+            <span class="kpi-value" id="kpi-ve">--</span>
+          </div>
+
+          <div class="kpi">
+            <span class="kpi-label">Pérdidas Totales (%)</span>
+            <span class="kpi-value" id="kpi-pt">--</span>
+          </div>
+
+          <div class="kpi">
+            <span class="kpi-label">Pérdidas Aparentes (Mm³/año)</span>
+            <span class="kpi-value" id="kpi-pa">--</span>
+          </div>
+
+          <div class="kpi">
+            <span class="kpi-label">Pérdidas Técnicas (Mm³/año)</span>
+            <span class="kpi-value" id="kpi-pr">--</span>
+          </div>
+
+          <div class="kpi">
+            <span class="kpi-label">AMSI</span>
+            <span class="kpi-value" id="kpi-amsi">--</span>
+          </div>
+
+          <div class="kpi">
+            <span class="kpi-label">UARL</span>
+            <span class="kpi-value" id="kpi-uarl">--</span>
+          </div>
+
+          <div class="kpi">
+            <span class="kpi-label">ILI</span>
+            <span class="kpi-value" id="kpi-ili">--</span>
+          </div>
+
+          <div class="kpi">
+            <span class="kpi-label">IPUF</span>
+            <span class="kpi-value" id="kpi-ipuf">--</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Panel Geográfico (GRÁFICAS AQUÍ) -->
+      <div class="tab-panel hidden" id="tab-geo">
+        <div id="charts-container"></div>
+        
+      </div>
+
     </div>
   </div>
 
-  <!-- Mapa -->
+  <!-- MAPA -->
   <div id="map"></div>
 
-  <!-- Scripts -->
+  <!-- SCRIPTS (ORDEN CORRECTO) -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/map.js"></script>
+  <script src="assets/js/shading.js"></script>
+  <script src="assets/js/popup.js"></script>
+  <script src="assets/js/animation.js"></script>
+  <script src="assets/js/tabs.js"></script>
+  <script src="assets/js/charts.js"></script>
   <script src="assets/js/app.js"></script>
+
 </body>
 </html>

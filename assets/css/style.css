@@ -73,3 +73,114 @@
   opacity: 0;
   transition: opacity 1.5s ease;
 }
+
+#kpi-container {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kpi {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 6px 10px;
+  border-left: 4px solid #2b8cbe;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.07);
+}
+
+.kpi-label {
+  font-size: 11px;
+  color: #444;
+}
+
+.kpi-value {
+  font-size: 17px;
+  font-weight: bold;
+  color: #0b7285;
+}
+.kpi-value {
+  font-size: 17px;
+  font-weight: bold;
+  color: #0b7285;
+  display: block;
+  margin-top: 2px;
+}
+.sector-actual {
+  font-size: 18px;
+  font-weight: bold;
+  color: #0b7285;
+  margin-top: -4px;
+  margin-bottom: 6px;
+}
+
+.kpi-value {
+  font-size: 17px;
+  font-weight: bold;
+  color: #0b7285;
+  display: block;
+  margin-top: 3px;
+}
+/* Tabs */
+#tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tab {
+  flex: 1;
+  padding: 6px 8px;
+  background: #e9ecef;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  color: #555;
+}
+
+.tab.active {
+  background: #2b8cbe;
+  color: white;
+}
+
+.tab:hover:not(.active) {
+  background: #d0dbe2;
+}
+
+.tab-panel {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+#info-tab-content, #geo-tab-content {
+    margin-top: 10px;
+}
+
+.active-tab {
+    background-color: #0a84ff !important;
+    color: white !important;
+}
+/* ======== BARRAS GEOGRÁFICAS ======== */
+#charts-container {
+  padding: 10px;
+  margin-top: 10px;
+}
+
+canvas {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Tabs */
+.tab.active {
+  background: #3498db !important;
+  color: white !important;
+}
