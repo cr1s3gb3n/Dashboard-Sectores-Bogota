@@ -1,55 +1,60 @@
 import json
-import re
 
-INPUT = "data/dashboard_data.json"
-OUTPUT = "data/dashboard_data_limpio.json"
+INPUT = "data/dashboard_data_limpio.json"
+OUTPUT = "data/dashboard_data_final.json"
 
-print("🔧 Limpiando nombres de columnas...")
+def procesar():
+    with open(INPUT, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-with open(INPUT, "r", encoding="utf-8") as f:
-    data = json.load(f)
+    salida = []
 
-def normalizar_clave(clave):
-    original = clave
+    for r in data:
+        nuevo = {}
 
-    # Corregir Pérdidas Técnicas
-    clave = clave.replace("ténicas", "técnicas")
-    clave = clave.replace("técnicas (Mm3/año)", "técnicas (Mm³/año)")
+        # Renombrar
+        nuevo["Sector_"] = r.get("Sector_")
 
-    # Estandarizar AMSI
-    clave = clave.replace("AMSI (m3/día/km/mca)", "AMSI")
+        nuevo["VE (Mm³/año)"] = r.get("VE (Mm³/año)", 0)
+        nuevo["Consumo Autorizado (Mm³/año)"] = r.get("Consumo autorizado (Mm³/año)", 0)
 
-    # Estandarizar unidades Mm3 → Mm³
-    clave = clave.replace("Mm3", "Mm³")
+        # Técnicas
+        tecnicas = r.get("Pérdidas Técnicas (Mm³/año)", 0)
+        nuevo["Pérdidas Técnicas (Mm³/año)"] = tecnicas
 
-    # Otras normalizaciones posibles
-    clave = clave.strip()
+        # Componentes
+        sub = r.get("Submedición (Mm³/año)", 0)
+        no_vis = r.get("Fugas no visibles (Fugas de fondo) (Mm³/año)", 0)
+        vis = r.get("Fugas visibles (reportadas) (Mm³/año)", 0)
+        err = r.get("Errores en el manejo de datos (Mm³/año)", 0)
+        cna = r.get("Consumo no autorizado (Mm³/año)", 0)
 
-    if clave != original:
-        print(f"✔ Renombrada: '{original}' → '{clave}'")
+        nuevo["Fugas Visibles (Mm³/año)"] = vis
+        nuevo["Fugas No Visibles (Mm³/año)"] = no_vis
+        nuevo["Submedición (Mm³/año)"] = sub
+        nuevo["Errores en el Manejo de Datos (Mm³/año)"] = err
+        nuevo["Consumo No Autorizado (Mm³/año)"] = cna
 
-    return clave
+        # Aparentes = Sub + CNA + Errores
+        aparentes = sub + cna + err
+        nuevo["Pérdidas Aparentes (Mm³/año)"] = aparentes
 
-def convertir_num(valor):
-    if isinstance(valor, (int, float)):
-        return valor
-    try:
-        valor = valor.replace(",", "")
-        return float(valor)
-    except:
-        return valor
+        # Totales = Técnicas + Aparentes
+        totales = tecnicas + aparentes
+        nuevo["Pérdidas Totales (Mm³/año)"] = totales
 
-nuevo = []
+        # Otros indicadores
+        nuevo["AMSI"] = r.get("AMSI", 0)
+        nuevo["UARL"] = r.get("UARL", 0)
+        nuevo["ILI"] = r.get("ILI", 0)
+        nuevo["IPUF"] = r.get("IPUF", 0)
 
-for fila in data:
-    nueva = {}
-    for k, v in fila.items():
-        key = normalizar_clave(k)
-        nueva[key] = convertir_num(v)
-    nuevo.append(nueva)
+        salida.append(nuevo)
 
-with open(OUTPUT, "w", encoding="utf-8") as f:
-    json.dump(nuevo, f, ensure_ascii=False, indent=2)
+    with open(OUTPUT, "w", encoding="utf-8") as f:
+        json.dump(salida, f, ensure_ascii=False, indent=2)
 
-print("\n🎉 JSON limpio generado con éxito →", OUTPUT)
-print("Registros:", len(nuevo))
+    print("✔ Archivo final creado en:", OUTPUT)
+
+if __name__ == "__main__":
+    procesar()

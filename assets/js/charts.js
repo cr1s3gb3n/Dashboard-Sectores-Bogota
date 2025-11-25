@@ -1,80 +1,128 @@
-// charts.js - single stacked-bar chart version
-
 console.log("📊 charts.js cargado correctamente");
 
-// referencia global a la gráfica
-let graficoUnico = null;
+let chartInstance = null;
 
-window.seleccionarSector = function(props) {
-    console.log("📊 Dibujando gráfica única para:", props);
+function renderCharts(data) {
 
-    const box = document.getElementById("chart-box");
-    if (!box) return console.warn("⚠ No existe #chart-box");
+    if (!data) return;
 
-    // limpiar contenido previo
-    box.innerHTML = '<canvas id="stackedChart"></canvas>';
-    const ctx = document.getElementById("stackedChart");
-
-    if (!ctx) return;
-
-    // colores
-    const azul = "#4e79a7";
-    const rojo = "#e15759";
-    const amarillo = "#f28e2b";
-    const verde = "#76b7b2";
-    const morado = "#59a14f";
-
-    // valores
-    const totalPerdidas = props["Pérdidas totales (Mm³/año)"] || 0;
-    const consumoAut = props["Consumo autorizado (Mm³/año)"] || 0;
-
-    const perdidasTec = props["Pérdidas técnicas (Mm³/año)"] || 0;
-    const perdidasApa = props["Pérdidas aparentes (Mm³/año)"] || 0;
-
-    const visibles = props["Fugas visibles (reportadas) (Mm³/año)"] || 0;
-    const noVisibles = props["Fugas no visibles (Fugas de fondo) (Mm³/año)"] || 0;
-    const subm = props["Submedición (Mm³/año)"] || 0;
-    const errores = props["Errores en el manejo de datos (Mm³/año)"] || 0;
-    const cna = props["Consumo no autorizado (Mm³/año)"] || 0;
+    const canvas = document.getElementById("stackedBars");
+    if (!canvas) return;
 
     // destruir gráfica previa
-    if (graficoUnico) graficoUnico.destroy();
+    if (chartInstance) chartInstance.destroy();
 
-    graficoUnico = new Chart(ctx, {
+    // extraer valores
+    const perdidasTotales = Number(data["Pérdidas Totales (Mm³/año)"] || 0);
+    const autorizado = Number(data["Consumo Autorizado (Mm³/año)"] || 0);
+
+    const tecnicas = Number(data["Pérdidas Técnicas (Mm³/año)"] || 0);
+    const aparentes = Number(data["Pérdidas Aparentes (Mm³/año)"] || 0);
+
+    const visibles = Number(data["Fugas Visibles (Mm³/año)"] || 0);
+    const noVisibles = Number(data["Fugas No Visibles (Mm³/año)"] || 0);
+    const sub = Number(data["Submedición (Mm³/año)"] || 0);
+    const cna = Number(data["Consumo No Autorizado (Mm³/año)"] || 0);
+    const errores = Number(data["Errores en el Manejo de Datos (Mm³/año)"] || 0);
+
+    chartInstance = new Chart(canvas, {
         type: "bar",
         data: {
-            labels: ["PT vs CA", "PTec vs PA", "Detalle pérdidas"],
+            labels: [
+                "Pérdidas vs Autorizado",
+                "Técnicas vs Aparentes",
+                "Composición Detallada"
+            ],
             datasets: [
                 // barra 1
-                { label: "Pérdidas Totales", data: [totalPerdidas, 0, 0], backgroundColor: rojo },
-                { label: "Consumo Autorizado", data: [consumoAut, 0, 0], backgroundColor: azul },
+                {
+                    label: "Pérdidas Totales",
+                    data: [perdidasTotales, 0, 0],
+                    backgroundColor: "#b2182b",
+                    stack: "grupo1"
+                },
+                {
+                    label: "Consumo Autorizado",
+                    data: [autorizado, 0, 0],
+                    backgroundColor: "#ef8a62",
+                    stack: "grupo1"
+                },
 
                 // barra 2
-                { label: "Pérdidas Técnicas", data: [0, perdidasTec, 0], backgroundColor: morado },
-                { label: "Pérdidas Aparentes", data: [0, perdidasApa, 0], backgroundColor: amarillo },
+                {
+                    label: "Pérdidas Técnicas",
+                    data: [0, tecnicas, 0],
+                    backgroundColor: "#2b8cbe",
+                    stack: "grupo2"
+                },
+                {
+                    label: "Pérdidas Aparentes",
+                    data: [0, aparentes, 0],
+                    backgroundColor: "#74add1",
+                    stack: "grupo2"
+                },
 
                 // barra 3
-                { label: "Visibles", data: [0, 0, visibles], backgroundColor: verde },
-                { label: "No visibles", data: [0, 0, noVisibles], backgroundColor: azul },
-                { label: "Submedición", data: [0, 0, subm], backgroundColor: amarillo },
-                { label: "Errores MD", data: [0, 0, errores], backgroundColor: morado },
-                { label: "CNA", data: [0, 0, cna], backgroundColor: rojo },
+                {
+                    label: "Fugas Visibles",
+                    data: [0, 0, visibles],
+                    backgroundColor: "#fee090",
+                    stack: "grupo3"
+                },
+                {
+                    label: "Fugas No Visibles",
+                    data: [0, 0, noVisibles],
+                    backgroundColor: "#fdae61",
+                    stack: "grupo3"
+                },
+                {
+                    label: "Submedición",
+                    data: [0, 0, sub],
+                    backgroundColor: "#91bfdb",
+                    stack: "grupo3"
+                },
+                {
+                    label: "Consumo No Autorizado",
+                    data: [0, 0, cna],
+                    backgroundColor: "#1a9850",
+                    stack: "grupo3"
+                },
+                {
+                    label: "Errores en el Manejo de Datos",
+                    data: [0, 0, errores],
+                    backgroundColor: "#fc8d59",
+                    stack: "grupo3"
+                }
             ]
         },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: "bottom" },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ctx.dataset.label
-                    }
-                }
-            },
-            scales: {
-                x: { stacked: true },
-                y: { stacked: true }
+options: {
+    indexAxis: "x",     // ⭐ ahora las barras son VERTICALES
+    responsive: true,
+    maintainAspectRatio: false,
+
+    // ⭐ HACER LAS BARRAS MÁS ANCHAS
+    elements: {
+        bar: {
+            barThickness: 20   // <-- Aumenta aquí (40–80 recomendado)
+        }
+    },
+
+    scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true }
+    },
+
+    plugins: {
+        legend: {
+            display: false   // ⭐ quitar la convención / leyenda
+        },
+        tooltip: {
+            callbacks: {
+                label: (ctx) =>
+                    `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} Mm³/año`
             }
         }
+    }
+}
     });
-};
+}

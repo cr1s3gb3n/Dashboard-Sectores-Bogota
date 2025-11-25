@@ -43,8 +43,8 @@ function cargarGeoJSON() {
             window.datosSectorSeleccionado = props;
 
             // 3) Llamar al módulo de gráficas si existe
-            if (typeof window.dibujarGraficas === "function") {
-              window.dibujarGraficas(props);
+            if (typeof window.renderCharts === "function") {
+              window.renderCharts(props);
             }
 
             // 4) Zoom suave al sector (si ya lo tenías antes, lo mantiene)
@@ -80,4 +80,18 @@ function getColorPerdida(p) {
   if (p >= 20) return "#fddbc7";
   if (p > 0) return "#d1e5f0";
   return "#f7f7f7";
+}
+function crearMapaBase() {
+
+  // Vista inicial lejana (como lo tenías)
+  map = L.map("map", { zoomControl: true })
+    .setView([4.5, -74.1], 5);   // <-- tu zoom desde lejos original
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19
+  }).addTo(map);
+
+  // 🔥 IMPORTANTE:
+  // Mantener tu animación inicial desde animation.js
+  // (no tocamos nada aquí — solo aseguramos que el zoom al comienzo exista)
 }

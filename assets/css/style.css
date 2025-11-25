@@ -184,3 +184,29 @@ canvas {
   background: #3498db !important;
   color: white !important;
 }
+#charts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px;
+}
+
+.mini-chart {
+  width: 100%;
+  height: 280px !important;
+}
+#charts-container {
+  width: 100%;
+  height: 360px;     /* importante */
+  padding: 10px;
+}
+#charts-container {
+  width: 100%;
+  height: 450px;     /* ⭐ más grande */
+  padding: 5px;
+}
+
+#stackedBars {
+  width: 100% !important;
+  height: 430px !important;  /* ⭐ tamaño perfecto */
+}
