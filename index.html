@@ -123,7 +123,11 @@
       <!-- Panel Geográfico (GRÁFICAS AQUÍ) -->
       <div class="tab-panel hidden" id="tab-geo">
         <div id="charts-container">
-          <canvas id="stackedBars"></canvas>
+          <div id="charts-container">
+  <canvas id="stackedBars"></canvas>
+  <canvas id="donutChart" style="margin-top:20px;"></canvas>
+</div>
+
         </div>
       </div>
 
@@ -135,17 +139,19 @@
   <div id="map"></div>
 
   <!-- SCRIPTS (ORDEN CORRECTO) -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/map.js"></script>
-  <script src="assets/js/shading.js"></script>
-  <script src="assets/js/popup.js"></script>
-  <script src="assets/js/animation.js"></script>
-  <script src="assets/js/tabs.js"></script>
-  <script src="assets/js/charts.js"></script>
-  <script src="assets/js/app.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/popup.js"></script>
+<script src="assets/js/shading.js"></script>
+<script src="assets/js/tabs.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/animation.js"></script>
+<script src="assets/js/map.js"></script>
+
+<script src="assets/js/app.js"></script>
+
 
 </body>
 </html>

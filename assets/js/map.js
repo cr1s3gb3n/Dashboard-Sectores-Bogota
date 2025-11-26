@@ -5,51 +5,40 @@ let capaSectores = null;
 
 function crearMapaBase() {
   map = L.map("map", { zoomControl: true })
-    .setView([4.5, -74.1], 5);
+    .setView([4.6, -74.1], 12);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19
+    maxZoom: 19,
   }).addTo(map);
 }
 
-// Cargar GeoJSON
 function cargarGeoJSON() {
   return fetch("data/sectores.geojson")
     .then(res => res.json())
     .then(geojson => {
       capaSectores = L.geoJSON(geojson, {
-        style: estiloBase,   // la que ya usas para el estilo base
+        style: estiloBase,
         onEachFeature: (feature, layer) => {
-          const data = buscarDatosSector(feature); // viene de data.js
           const codigo = feature.properties.Sector_ || "Sin código";
+          const data = buscarDatosSector(feature);
 
-          // Popup sencillo sobre el mapa
-          const popupHtml = `<strong>Sector ${codigo}</strong>`;
-          layer.bindPopup(popupHtml);
+          layer.bindPopup(`<strong>Sector ${codigo}</strong>`);
 
-          // Lo que pasa al hacer clic en un sector
           layer.on("click", () => {
-            // 1) Actualizar panel de Información (KPIs)
-            actualizarKPIs(data || null);
             actualizarSectorSeleccionado(codigo);
+            actualizarKPIs(data || {});
 
-            // 2) Preparar objeto para las gráficas
-            const props = {
-              codigo: codigo,
+            window.datosSectorSeleccionado = {
+              codigo,
               ...(data || {})
             };
 
-            // Guardar el último sector seleccionado (lo usa tabs.js)
-            window.datosSectorSeleccionado = props;
-
-            // 3) Llamar al módulo de gráficas si existe
             if (typeof window.renderCharts === "function") {
-              window.renderCharts(props);
+              window.renderCharts(window.datosSectorSeleccionado);
             }
 
-            // 4) Zoom suave al sector (si ya lo tenías antes, lo mantiene)
-            if (map && layer.getBounds) {
-
+            if (typeof shadingByIndicator === "function") {
+              shadingByIndicator(codigo);
             }
           });
         }
@@ -59,18 +48,15 @@ function cargarGeoJSON() {
     });
 }
 
-
-
-// Colores de pérdidas totales
 function estiloBase(feature) {
   const data = buscarDatosSector(feature);
-  const p = data ? Number(data["Pérdidas totales (%)"] || 0) : 0;
+  const p = data ? Number(data["Pérdidas Totales (Mm³/año)"] || 0) : 0;
 
   return {
     color: "#0b7285",
     weight: 1,
     fillColor: getColorPerdida(p),
-    fillOpacity: 0.45
+    fillOpacity: 0.45,
   };
 }
 
@@ -79,19 +65,7 @@ function getColorPerdida(p) {
   if (p >= 30) return "#ef8a62";
   if (p >= 20) return "#fddbc7";
   if (p > 0) return "#d1e5f0";
-  return "#f7f7f7";
+  return "#ffffff00";
 }
-function crearMapaBase() {
 
-  // Vista inicial lejana (como lo tenías)
-  map = L.map("map", { zoomControl: true })
-    .setView([4.5, -74.1], 5);   // <-- tu zoom desde lejos original
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19
-  }).addTo(map);
-
-  // 🔥 IMPORTANTE:
-  // Mantener tu animación inicial desde animation.js
-  // (no tocamos nada aquí — solo aseguramos que el zoom al comienzo exista)
-}
+console.log("🗺️ map.js listo");

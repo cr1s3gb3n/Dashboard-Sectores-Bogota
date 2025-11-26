@@ -1,10 +1,5 @@
 console.log("🧁 popup.js cargado");
 
-// Aquí luego agregamos las tortas
-function crearTorta(feature) {
-  // pendiente (lo hacemos cuando tú quieras)
-}
-
 function formatNumber(value) {
   if (value === null || value === undefined || value === "") return "--";
 
@@ -21,9 +16,9 @@ function actualizarKPIs(data) {
 
   const map = {
     "kpi-ve": "VE (Mm³/año)",
-    "kpi-pt": "Pérdidas totales (%)",
-    "kpi-pa": "Pérdidas aparentes (Mm³/año)",
-    "kpi-pr": "Pérdidas técnicas (Mm³/año)",
+    "kpi-pt": "Pérdidas Totales (Mm³/año)",
+    "kpi-pa": "Pérdidas Aparentes (Mm³/año)",
+    "kpi-pr": "Pérdidas Técnicas (Mm³/año)",
     "kpi-amsi": "AMSI",
     "kpi-uarl": "UARL",
     "kpi-ili": "ILI",

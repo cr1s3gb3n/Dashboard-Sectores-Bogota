@@ -1,18 +1,21 @@
 console.log("📊 charts.js cargado correctamente");
 
-let chartInstance = null;
+let barChart = null;
+let donutChart = null;
 
 function renderCharts(data) {
 
     if (!data) return;
 
-    const canvas = document.getElementById("stackedBars");
-    if (!canvas) return;
+    const canvasBar = document.getElementById("stackedBars");
+    const canvasDonut = document.getElementById("donutChart");
 
-    // destruir gráfica previa
-    if (chartInstance) chartInstance.destroy();
+    if (!canvasBar || !canvasDonut) return;
 
-    // extraer valores
+    if (barChart) barChart.destroy();
+    if (donutChart) donutChart.destroy();
+
+    // Datos
     const perdidasTotales = Number(data["Pérdidas Totales (Mm³/año)"] || 0);
     const autorizado = Number(data["Consumo Autorizado (Mm³/año)"] || 0);
 
@@ -25,104 +28,95 @@ function renderCharts(data) {
     const cna = Number(data["Consumo No Autorizado (Mm³/año)"] || 0);
     const errores = Number(data["Errores en el Manejo de Datos (Mm³/año)"] || 0);
 
-    chartInstance = new Chart(canvas, {
+    /* ==========================================
+       ⭐ BARRAS HORIZONTALES MEJORADAS
+       ========================================== */
+    barChart = new Chart(canvasBar, {
         type: "bar",
         data: {
             labels: [
-                "Pérdidas vs Autorizado",
-                "Técnicas vs Aparentes",
-                "Composición Detallada"
+                "Pérdidas / Autorizado",
+                "Técnicas / Aparentes"
             ],
             datasets: [
-                // barra 1
-                {
-                    label: "Pérdidas Totales",
-                    data: [perdidasTotales, 0, 0],
-                    backgroundColor: "#b2182b",
-                    stack: "grupo1"
-                },
-                {
-                    label: "Consumo Autorizado",
-                    data: [autorizado, 0, 0],
-                    backgroundColor: "#ef8a62",
-                    stack: "grupo1"
-                },
+                { label: "Pérdidas Totales", data: [perdidasTotales, 0], backgroundColor: "#b2182b", stack: "g1" },
+                { label: "Consumo Autorizado", data: [autorizado, 0], backgroundColor: "#ef8a62", stack: "g1" },
 
-                // barra 2
-                {
-                    label: "Pérdidas Técnicas",
-                    data: [0, tecnicas, 0],
-                    backgroundColor: "#2b8cbe",
-                    stack: "grupo2"
-                },
-                {
-                    label: "Pérdidas Aparentes",
-                    data: [0, aparentes, 0],
-                    backgroundColor: "#74add1",
-                    stack: "grupo2"
-                },
-
-                // barra 3
-                {
-                    label: "Fugas Visibles",
-                    data: [0, 0, visibles],
-                    backgroundColor: "#fee090",
-                    stack: "grupo3"
-                },
-                {
-                    label: "Fugas No Visibles",
-                    data: [0, 0, noVisibles],
-                    backgroundColor: "#fdae61",
-                    stack: "grupo3"
-                },
-                {
-                    label: "Submedición",
-                    data: [0, 0, sub],
-                    backgroundColor: "#91bfdb",
-                    stack: "grupo3"
-                },
-                {
-                    label: "Consumo No Autorizado",
-                    data: [0, 0, cna],
-                    backgroundColor: "#1a9850",
-                    stack: "grupo3"
-                },
-                {
-                    label: "Errores en el Manejo de Datos",
-                    data: [0, 0, errores],
-                    backgroundColor: "#fc8d59",
-                    stack: "grupo3"
-                }
+                { label: "Pérdidas Técnicas", data: [0, tecnicas], backgroundColor: "#2b8cbe", stack: "g2" },
+                { label: "Pérdidas Aparentes", data: [0, aparentes], backgroundColor: "#74add1", stack: "g2" }
             ]
         },
-options: {
-    indexAxis: "x",     // ⭐ ahora las barras son VERTICALES
-    responsive: true,
-    maintainAspectRatio: false,
-
-    // ⭐ HACER LAS BARRAS MÁS ANCHAS
-    elements: {
-        bar: {
-            barThickness: 20   // <-- Aumenta aquí (40–80 recomendado)
-        }
-    },
-
-    scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true }
-    },
-
-    plugins: {
-        legend: {
-            display: false   // ⭐ quitar la convención / leyenda
-        },
-        tooltip: {
-            callbacks: {
-                label: (ctx) =>
-                    `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} Mm³/año`
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            elements: {
+                bar: { barThickness: 50 }
+            },
+            scales: {
+                x: { 
+                    stacked: true, 
+                    beginAtZero: true,
+                    ticks: {
+                        font: { size: 13, weight: "600" }
+                    }
+                },
+                y: { 
+                    stacked: true,
+                    ticks: {
+                        font: { size: 14, weight: "700" },
+                        padding: 8,
+                        align: "center"
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    bodyFont: { size: 14, weight: "600" },
+                    callbacks: {
+                        label: (ctx) =>
+                            `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} Mm³/año`
+                    }
+                }
             }
         }
-    }
-}
+    });
+
+    /* ==========================================
+       ⭐ DONUT → LEYENDA DEBAJO Y FUENTE NÍTIDA
+       ========================================== */
+    donutChart = new Chart(canvasDonut, {
+        type: "doughnut",
+        data: {
+            labels: ["Visibles", "No Visibles", "Submedición", "CNA", "Errores"],
+            datasets: [{
+                data: [visibles, noVisibles, sub, cna, errores],
+                backgroundColor: ["#fee090", "#fdae61", "#91bfdb", "#1a9850", "#fc8d59"],
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { 
+                    position: "bottom",   // ⭐ AQUÍ SE MUEVE DEBAJO
+                    labels: {
+                        font: { size: 13, weight: "600" },
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                    bodyFont: { size: 14, weight: "600" },
+                    callbacks: {
+                        label: (ctx) =>
+                            `${ctx.label}: ${ctx.raw.toFixed(2)} Mm³/año`
+                    }
+                }
+            }
+        }
     });
 }
+
+window.renderCharts = renderCharts;
