@@ -23,44 +23,57 @@
   <!-- PANEL LATERAL CORRECTO -->
   <div id="panel" class="panel">
 
-    <!-- Título del sector -->
-    <h4>Sector seleccionado:</h4>
-    <div id="sector-actual" class="sector-actual">Ninguno</div>
+<!-- Título principal del mapa -->
+<h4 id="sector-header" class="sector-header">
+  Mapa Coroplético:
+  <span id="toggle-indicadores" class="toggle-arrow">▶</span>
+</h4>
 
-    <hr>
+<!-- CONTENEDOR DESPLEGABLE (acordeón) -->
+<div id="indicadores-wrapper" class="indicadores-wrapper collapsed">
 
-    <!-- Sombrear por indicador -->
-    <h4>Sombrear por indicador</h4>
-    <div id="sombrear-opciones">
+  <h4>Sombrear por indicador</h4>
 
-      <div class="legend-row" data-indicador="Submedición (Mm³/año)">
-        <div class="legend-dot" style="background:#2b8cbe"></div>
-        <span>Submedición</span>
-      </div>
+  <div id="sombrear-opciones">
 
-      <div class="legend-row" data-indicador="Errores en el manejo de datos (Mm³/año)">
-        <div class="legend-dot" style="background:#fdae61"></div>
-        <span>Errores / Fallas de catastro</span>
-      </div>
-
-      <div class="legend-row" data-indicador="Consumo no autorizado (Mm³/año)">
-        <div class="legend-dot" style="background:#1a9850"></div>
-        <span>Consumo no autorizado</span>
-      </div>
-
-      <div class="legend-row" data-indicador="Pérdidas técnicas (Mm³/año)">
-        <div class="legend-dot" style="background:#d73027"></div>
-        <span>Fugas técnicas</span>
-      </div>
-
-      <div class="legend-row" data-indicador="AMSI">
-        <div class="legend-dot" style="background:#6a51a3"></div>
-        <span>AMSI</span>
-      </div>
-
+    <div class="legend-row" data-indicador="Submedición (Mm³/año)">
+      <div class="legend-dot" style="background:#2b8cbe"></div>
+      <span>Submedición</span>
     </div>
 
-    <hr>
+    <div class="legend-row" data-indicador="Errores en el manejo de datos (Mm³/año)">
+      <div class="legend-dot" style="background:#fdae61"></div>
+      <span>Errores / Fallas de catastro</span>
+    </div>
+
+    <div class="legend-row" data-indicador="Consumo no autorizado (Mm³/año)">
+      <div class="legend-dot" style="background:#1a9850"></div>
+      <span>Consumo no autorizado</span>
+    </div>
+
+    <div class="legend-row" data-indicador="Pérdidas técnicas (Mm³/año)">
+      <div class="legend-dot" style="background:#d73027"></div>
+      <span>Fugas técnicas</span>
+    </div>
+
+    <div class="legend-row" data-indicador="AMSI">
+      <div class="legend-dot" style="background:#6a51a3"></div>
+      <span>AMSI</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Sector seleccionado (esto VA DESPUÉS del acordeón) -->
+<!-- Tarjeta: Sector Seleccionado -->
+<div class="sector-card">
+  <div class="sector-card-title">Sector seleccionado</div>
+  <div id="sector-actual" class="sector-card-value">Ninguno</div>
+</div>
+
+
+
+
 
     <!-- TABS -->
     <div id="tabs">

@@ -218,3 +218,48 @@ canvas {
   width: 100% !important;
   height: 230px !important;
 }
+/* Acordeón indicadores */
+.indicadores-wrapper {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  max-height: 0;
+}
+
+.indicadores-wrapper.expanded {
+  max-height: 300px; /* suficiente para las 5 opciones */
+}
+
+.toggle-arrow {
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 8px;
+  transition: transform 0.25s ease;
+}
+
+.toggle-arrow.rotated {
+  transform: rotate(90deg);
+}
+
+/* Tarjeta de sector seleccionado */
+.sector-card {
+  background: #ffffff;
+  border: 1px solid #cfd8dc;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.sector-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #455a64;
+  margin-bottom: 4px;
+}
+
+.sector-card-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #0277bd;
+}
