@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
 // ===============================
 // 2. Tabs (Información / Geográfico)
 // ===============================
@@ -46,6 +47,28 @@ document.querySelectorAll(".tab").forEach((tab) => {
 
     document.getElementById(`tab-${selected}`).classList.remove("hidden");
   });
+});
+
+// ===============================
+// 3. Flecha de despliegue coroplético
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+  const flecha = document.getElementById("toggle-coropletico");
+  const flechaSvg = document.getElementById("flecha-svg");
+  const opciones = document.getElementById("coropletico-opciones");
+  if (flecha && opciones && flechaSvg) {
+    flecha.addEventListener("click", () => {
+      if (opciones.style.display === "none" || opciones.style.display === "") {
+        opciones.style.display = "block";
+        flechaSvg.style.transform = "rotate(0deg)";
+      } else {
+        opciones.style.display = "none";
+        flechaSvg.style.transform = "rotate(-90deg)";
+      }
+    });
+    opciones.style.display = "block";
+    flechaSvg.style.transform = "rotate(0deg)";
+  }
 });
 
 console.log("✔ app.js arrancando... pero SIN inicializar mapas (correcto)");

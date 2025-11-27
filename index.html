@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.css">
   <script src="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.js"></script>
 
+  <!-- Favicon (evita 404 en consola) -->
+  <link rel="icon" href="assets/img/logo_andes.png" type="image/png">
+
   <!-- Estilos -->
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -33,7 +36,9 @@
 
       <h3 id="titulo-panel">
         Mapa Coroplético:
-        <span id="toggle-coropletico" class="flecha">▼</span>
+        <span id="toggle-coropletico" class="flecha" style="display:inline-block;transition:transform 0.2s;vertical-align:middle;cursor:pointer;">
+          <svg id="flecha-svg" width="18" height="18" viewBox="0 0 20 20"><polyline points="6 8 10 12 14 8" fill="none" stroke="#0077c8" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
       </h3>
 
       <!-- OPCIONES -->
@@ -84,7 +89,21 @@
       </div>
 
       <div id="tab-geo" class="tab-content">
-        Datos geográficos disponibles próximamente.
+        <div class="geo-charts">
+          <div class="geo-charts-top">
+            <label>(VE)</label>
+            <div style="height:320px; padding:8px; background:#fff; border-radius:6px; box-shadow:0 1px 2px rgba(0,0,0,0.06);">
+              <canvas id="stacked-bars-total" style="width:100%;height:100%;"></canvas>
+            </div>
+          </div>
+
+          <div class="geo-charts-bottom" style="margin-top:12px;">
+            <label>Distribución de pérdidas y eventos (pie)</label>
+            <div style="height:260px; padding:8px; background:#fff; border-radius:6px; box-shadow:0 1px 2px rgba(0,0,0,0.06);">
+              <canvas id="pie-fugas" style="width:100%;height:100%;"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -93,7 +112,10 @@
   <!-- JS -->
   <script src="assets/js/data.js"></script>
   <script src="assets/js/popup.js"></script>
-  <script src="assets/js/tabs.js"></script>
+  <!-- Chart.js (UMD) required by charts.js which uses global `Chart` -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <!-- tabs.js imports ./charts.js so must be loaded as a module -->
+  <script type="module" src="assets/js/tabs.js"></script>
   <script src="assets/js/shading3d.js" type="module"></script>
   <script src="assets/js/map.js" type="module"></script>
 

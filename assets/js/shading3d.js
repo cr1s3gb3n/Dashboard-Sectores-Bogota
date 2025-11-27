@@ -33,12 +33,23 @@ export function generarExpresionColor(indicador, geojson) {
   const min = Math.min(...valores);
   const max = Math.max(...valores);
 
-  // Escala de color
+  // Colores gradiente por indicador (igual que la leyenda)
+  const colores = {
+    "Submedición": {min: "#d0e9ff", max: "#2b8cbe"},
+    "Errores / Fallas de catastro": {min: "#fff2d6", max: "#fdae61"},
+    "Consumo no autorizado": {min: "#b7e3c7", max: "#1a9850"},
+    "Fugas técnicas": {min: "#f7c6c6", max: "#d73027"},
+    "AMSI": {min: "#e2d6f7", max: "#6a51a3"}
+  };
+
+  const colorSet = colores[indicador] || {min: "#e0e0e0", max: "#d0e9ff"};
+
+  // Gradiente por valor
   return [
     "interpolate",
     ["linear"],
     ["get", campo],
-    min, "#d0e9ff",
-    max, "#1f78b4",
+    min, colorSet.min,
+    max, colorSet.max
   ];
 }

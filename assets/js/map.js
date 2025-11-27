@@ -1,4 +1,5 @@
 import { generarExpresionColor } from "./shading3d.js";
+import { renderPieFugas, renderDoubleStackedBars } from "./charts.js";
 console.log("map.js cargado");
 
 let geojsonSectores = null;
@@ -60,7 +61,15 @@ map.on("load", async () => {
     document.getElementById("sector-actual").textContent = sector;
 
     if (window.sectorDataMap[sector]) {
-      actualizarKPIs(window.sectorDataMap[sector]);
+      const sectorData = window.sectorDataMap[sector];
+      actualizarKPIs(sectorData);
+      // Actualizar pie y barras con datos del sector seleccionado
+      try {
+        renderPieFugas(sectorData);
+        renderDoubleStackedBars(sectorData);
+      } catch (err) {
+        console.warn('No se pudo renderizar gráficos del sector:', err);
+      }
     }
   });
 
