@@ -1,122 +1,77 @@
-console.log("📊 charts.js cargado correctamente");
+console.log("charts.js cargado correctamente");
 
-let barChart = null;
+let barrasChart = null;
 let donutChart = null;
 
-function renderCharts(data) {
+// Color base para gráficos
+const colorBase = "#4a90e2";
 
-    if (!data) return;
+// -----------------------------
+// Función global para renderizar gráficos
+// -----------------------------
+window.renderCharts = function (data) {
+  if (!data) return;
 
-    const canvasBar = document.getElementById("stackedBars");
-    const canvasDonut = document.getElementById("donutChart");
+  // Datos para el gráfico de barras
+  const labels = [
+    "Pérdidas Totales",
+    "Pérdidas Aparentes",
+    "Pérdidas Técnicas"
+  ];
 
-    if (!canvasBar || !canvasDonut) return;
+  const valores = [
+    data["Pérdidas Totales (Mm³/año)"],
+    data["Pérdidas Aparentes (Mm³/año)"],
+    data["Pérdidas Técnicas (Mm³/año)"]
+  ];
 
-    if (barChart) barChart.destroy();
-    if (donutChart) donutChart.destroy();
+  // -----------------------------
+  // BARRAS
+  // -----------------------------
+  const ctx1 = document.getElementById("chart-barras").getContext("2d");
 
-    // Datos
-    const perdidasTotales = Number(data["Pérdidas Totales (Mm³/año)"] || 0);
-    const autorizado = Number(data["Consumo Autorizado (Mm³/año)"] || 0);
+  if (barrasChart) barrasChart.destroy();
 
-    const tecnicas = Number(data["Pérdidas Técnicas (Mm³/año)"] || 0);
-    const aparentes = Number(data["Pérdidas Aparentes (Mm³/año)"] || 0);
+  barrasChart = new Chart(ctx1, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Mm³/año",
+        data: valores,
+        backgroundColor: ["#4575b4", "#91bfdb", "#e0f3f8"]
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font: { size: 11 } } },
+        y: { ticks: { font: { size: 11 } } }
+      }
+    }
+  });
 
-    const visibles = Number(data["Fugas Visibles (Mm³/año)"] || 0);
-    const noVisibles = Number(data["Fugas No Visibles (Mm³/año)"] || 0);
-    const sub = Number(data["Submedición (Mm³/año)"] || 0);
-    const cna = Number(data["Consumo No Autorizado (Mm³/año)"] || 0);
-    const errores = Number(data["Errores en el Manejo de Datos (Mm³/año)"] || 0);
+  // -----------------------------
+  // DONUT
+  // -----------------------------
+  const ctx2 = document.getElementById("chart-donut").getContext("2d");
 
-    /* ==========================================
-       ⭐ BARRAS HORIZONTALES MEJORADAS
-       ========================================== */
-    barChart = new Chart(canvasBar, {
-        type: "bar",
-        data: {
-            labels: [
-                "Pérdidas / Autorizado",
-                "Técnicas / Aparentes"
-            ],
-            datasets: [
-                { label: "Pérdidas Totales", data: [perdidasTotales, 0], backgroundColor: "#b2182b", stack: "g1" },
-                { label: "Consumo Autorizado", data: [autorizado, 0], backgroundColor: "#ef8a62", stack: "g1" },
+  if (donutChart) donutChart.destroy();
 
-                { label: "Pérdidas Técnicas", data: [0, tecnicas], backgroundColor: "#2b8cbe", stack: "g2" },
-                { label: "Pérdidas Aparentes", data: [0, aparentes], backgroundColor: "#74add1", stack: "g2" }
-            ]
-        },
-        options: {
-            indexAxis: "y",
-            responsive: true,
-            maintainAspectRatio: false,
-            elements: {
-                bar: { barThickness: 50 }
-            },
-            scales: {
-                x: { 
-                    stacked: true, 
-                    beginAtZero: true,
-                    ticks: {
-                        font: { size: 13, weight: "600" }
-                    }
-                },
-                y: { 
-                    stacked: true,
-                    ticks: {
-                        font: { size: 14, weight: "700" },
-                        padding: 8,
-                        align: "center"
-                    }
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    bodyFont: { size: 14, weight: "600" },
-                    callbacks: {
-                        label: (ctx) =>
-                            `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} Mm³/año`
-                    }
-                }
-            }
-        }
-    });
-
-    /* ==========================================
-       ⭐ DONUT → LEYENDA DEBAJO Y FUENTE NÍTIDA
-       ========================================== */
-    donutChart = new Chart(canvasDonut, {
-        type: "doughnut",
-        data: {
-            labels: ["Visibles", "No Visibles", "Submedición", "CNA", "Errores"],
-            datasets: [{
-                data: [visibles, noVisibles, sub, cna, errores],
-                backgroundColor: ["#fee090", "#fdae61", "#91bfdb", "#1a9850", "#fc8d59"],
-                hoverOffset: 15
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { 
-                    position: "bottom",   // ⭐ AQUÍ SE MUEVE DEBAJO
-                    labels: {
-                        font: { size: 13, weight: "600" },
-                        padding: 15
-                    }
-                },
-                tooltip: {
-                    bodyFont: { size: 14, weight: "600" },
-                    callbacks: {
-                        label: (ctx) =>
-                            `${ctx.label}: ${ctx.raw.toFixed(2)} Mm³/año`
-                    }
-                }
-            }
-        }
-    });
-}
-
-window.renderCharts = renderCharts;
+  donutChart = new Chart(ctx2, {
+    type: "doughnut",
+    data: {
+      labels,
+      datasets: [{
+        data: valores,
+        backgroundColor: ["#4575b4", "#91bfdb", "#e0f3f8"]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: "bottom" } }
+    }
+  });
+};

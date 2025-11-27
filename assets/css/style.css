@@ -1,265 +1,101 @@
-﻿/* ====== RESET ====== */
-html, body {
-  height: 100%;
+﻿body, html {
   margin: 0;
-  font-family: system-ui, Arial, sans-serif;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
 }
 
+/* Layout */
+#layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  height: 100vh;
+}
+
+/* Mapa */
 #map {
+  width: 100%;
   height: 100%;
 }
 
-.leaflet-container {
-  background: #f3f6f9;
+/* Panel lateral */
+#panel {
+  background: white;
+  padding: 15px;
+  border-left: 3px solid #0b8bd9;
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
-/* ====== PANEL LATERAL ====== */
-.panel {
+/* Logos */
+.logo-container {
   position: absolute;
-  z-index: 1000;
-  top: 14px;
-  right: 14px;
-  background: #fff;
-  border: 2px solid #2b8cbe;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,.15);
-  padding: 12px 12px 8px;
-  width: 230px;
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+  z-index: 5;
 }
 
-.panel h4 {
-  margin: 0 0 8px 0;
-  font-size: 14px;
+.logo-box {
+  background: white;
+  padding: 10px 25px;
+  border-radius: 10px;
+  display: inline-flex;
+  gap: 20px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
 }
 
-/* Leyenda */
+.cine-logo {
+  height: 70px;
+  object-fit: contain;
+}
+
 .legend-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 6px 0;
+  padding: 5px;
   cursor: pointer;
-  font-size: 13px;
 }
 
 .legend-dot {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: 2px solid #2b8cbe;
 }
 
-/* Popup */
-.leaflet-popup-content {
-  margin: 10px 14px;
-}
-
-.popup-title {
-  font-weight: 700;
-  font-size: 24px;
-  text-align: center;
-  margin-top: 4px;
-}
-
-.popup-sub {
-  text-align: center;
-  font-size: 11px;
-  color: #444;
-  margin-bottom: 8px;
-}
-
-/* ====== LOGOS ====== */
-#logos-container {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1500;
-
-  display: flex;
-  align-items: center;
-  gap: 20px;
-
-  background: rgba(255, 255, 255, 0.9);
-  padding: 8px 16px;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-  backdrop-filter: blur(4px);
-}
-
-#logos-container .logo {
-  height: 100px;
-  object-fit: contain;
-}
-
-@media (max-width: 600px) {
-  #logos-container .logo {
-    height: 38px;
-  }
-  #logos-container {
-    gap: 12px;
-    padding: 6px 10px;
-  }
-}
-
-/* ====== INTRO TEXT ====== */
-#intro-text {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 32px;
-  font-weight: 600;
-  text-shadow: 0 0 12px black;
-  opacity: 0;
-  transition: opacity 1.5s ease;
-  z-index: 2000;
-}
-
-/* ====== KPIs ====== */
-#kpi-container {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.kpi {
-  background: #f8f9fa;
+#sector-box {
+  margin: 15px 0;
+  padding: 10px;
+  background: #eef7ff;
   border-radius: 8px;
-  padding: 6px 10px;
-  border-left: 4px solid #2b8cbe;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.07);
 }
 
-.kpi-label {
-  font-size: 11px;
-  color: #444;
-}
-
-.kpi-value {
-  font-size: 17px;
+#sector-actual {
   font-weight: bold;
-  color: #0b7285;
-  display: block;
-  margin-top: 3px;
-}
-
-/* ====== SECTOR ====== */
-.sector-actual {
-  font-size: 18px;
-  font-weight: bold;
-  color: #0b7285;
-  margin-top: -4px;
-  margin-bottom: 6px;
-}
-
-/* ====== TABS ====== */
-#tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  color: #0077c8;
 }
 
 .tab {
-  flex: 1;
-  padding: 6px 8px;
-  background: #e9ecef;
+  padding: 8px 12px;
+  margin-right: 5px;
+  background: #e1e1e1;
   border: none;
-  border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  text-align: center;
-  color: #555;
+  border-radius: 6px;
 }
 
 .tab.active {
-  background: #3498db !important;
-  color: white !important;
+  background: #0077c8;
+  color: white;
 }
 
-.tab:hover:not(.active) {
-  background: #d0dbe2;
-}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-.tab-panel {
-  display: block;
-}
-
-.hidden {
-  display: none;
-}
-
-/* ====== GRÁFICAS GEOGRÁFICAS ====== */
-#charts-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 5px;
-  height: auto !important;
-}
-
-canvas {
-  background: #ffffff;
-  border-radius: 10px;
+.kpi {
+  background: #f5faff;
   padding: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  display: block;
-}
-
-#stackedBars {
-  width: 100% !important;
-  height: 250px !important;
-}
-
-#donutChart {
-  width: 100% !important;
-  height: 230px !important;
-}
-/* Acordeón indicadores */
-.indicadores-wrapper {
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-  max-height: 0;
-}
-
-.indicadores-wrapper.expanded {
-  max-height: 300px; /* suficiente para las 5 opciones */
-}
-
-.toggle-arrow {
-  cursor: pointer;
-  font-size: 14px;
-  margin-left: 8px;
-  transition: transform 0.25s ease;
-}
-
-.toggle-arrow.rotated {
-  transform: rotate(90deg);
-}
-
-/* Tarjeta de sector seleccionado */
-.sector-card {
-  background: #ffffff;
-  border: 1px solid #cfd8dc;
-  padding: 10px 12px;
-  border-radius: 10px;
-  margin-top: 10px;
-  margin-bottom: 15px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-.sector-card-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #455a64;
-  margin-bottom: 4px;
-}
-
-.sector-card-value {
-  font-size: 20px;
-  font-weight: bold;
-  color: #0277bd;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }

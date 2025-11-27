@@ -1,60 +1,57 @@
 import json
 
-INPUT = "data/dashboard_data_limpio.json"
-OUTPUT = "data/dashboard_data_final.json"
+# === ARCHIVOS ===
+geojson_file = "data/sectores.geojson"
+kpi_file = "data/dashboard_data_final.json"
+output_file = "data/sectores_3d.geojson"
 
-def procesar():
-    with open(INPUT, "r", encoding="utf-8") as f:
-        data = json.load(f)
+print("🔄 Cargando archivos...")
 
-    salida = []
+# === Cargar GeoJSON ===
+with open(geojson_file, "r", encoding="utf-8") as f:
+    geo = json.load(f)
 
-    for r in data:
-        nuevo = {}
+# === Cargar KPIs ===
+with open(kpi_file, "r", encoding="utf-8") as f:
+    datos = json.load(f)
 
-        # Renombrar
-        nuevo["Sector_"] = r.get("Sector_")
+print("🟢 Archivos cargados correctamente")
 
-        nuevo["VE (Mm³/año)"] = r.get("VE (Mm³/año)", 0)
-        nuevo["Consumo Autorizado (Mm³/año)"] = r.get("Consumo autorizado (Mm³/año)", 0)
+# Convertir KPIs a diccionario indexado por Sector_
+kpi_dict = { item["Sector_"]: item for item in datos }
 
-        # Técnicas
-        tecnicas = r.get("Pérdidas Técnicas (Mm³/año)", 0)
-        nuevo["Pérdidas Técnicas (Mm³/año)"] = tecnicas
+# === Fusionar ===
+contador = 0
 
-        # Componentes
-        sub = r.get("Submedición (Mm³/año)", 0)
-        no_vis = r.get("Fugas no visibles (Fugas de fondo) (Mm³/año)", 0)
-        vis = r.get("Fugas visibles (reportadas) (Mm³/año)", 0)
-        err = r.get("Errores en el manejo de datos (Mm³/año)", 0)
-        cna = r.get("Consumo no autorizado (Mm³/año)", 0)
+print("🔧 Insertando KPIs en el GeoJSON...")
 
-        nuevo["Fugas Visibles (Mm³/año)"] = vis
-        nuevo["Fugas No Visibles (Mm³/año)"] = no_vis
-        nuevo["Submedición (Mm³/año)"] = sub
-        nuevo["Errores en el Manejo de Datos (Mm³/año)"] = err
-        nuevo["Consumo No Autorizado (Mm³/año)"] = cna
+for feature in geo["features"]:
+    props = feature["properties"]
+    sector = props.get("Sector_")
 
-        # Aparentes = Sub + CNA + Errores
-        aparentes = sub + cna + err
-        nuevo["Pérdidas Aparentes (Mm³/año)"] = aparentes
+    if sector in kpi_dict:
+        kpis = kpi_dict[sector]
 
-        # Totales = Técnicas + Aparentes
-        totales = tecnicas + aparentes
-        nuevo["Pérdidas Totales (Mm³/año)"] = totales
+        # Insertar TODAS las columnas excepto "Sector_"
+        for key, value in kpis.items():
+            if key == "Sector_":
+                continue
 
-        # Otros indicadores
-        nuevo["AMSI"] = r.get("AMSI", 0)
-        nuevo["UARL"] = r.get("UARL", 0)
-        nuevo["ILI"] = r.get("ILI", 0)
-        nuevo["IPUF"] = r.get("IPUF", 0)
+            # Valores nulos → 0 o None
+            if value in ["", None, "-", "--"]:
+                props[key] = None
+            else:
+                try:
+                    props[key] = float(value)
+                except:
+                    props[key] = value
 
-        salida.append(nuevo)
+        contador += 1
 
-    with open(OUTPUT, "w", encoding="utf-8") as f:
-        json.dump(salida, f, ensure_ascii=False, indent=2)
+print(f"🟢 KPIs insertados en {contador} sectores.")
 
-    print("✔ Archivo final creado en:", OUTPUT)
+# === Guardar nuevo GeoJSON ===
+with open(output_file, "w", encoding="utf-8") as f:
+    json.dump(geo, f, ensure_ascii=False, indent=2)
 
-if __name__ == "__main__":
-    procesar()
+print(f"✅ Archivo final creado: {output_file}")

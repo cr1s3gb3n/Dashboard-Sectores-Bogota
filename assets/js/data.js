@@ -1,19 +1,25 @@
-console.log("📦 data.js cargado");
+console.log("data.js cargado");
 
-let dashboardData = [];
+// Variable global para KPIs
+window.sectorDataMap = {};
 
-// Cargar JSON humanizado DEFINITIVO
-function cargarJSON() {
-  return fetch("data/dashboard_data_final.json")
-    .then(res => res.json())
-    .then(json => {
-      dashboardData = json;
-      console.log("📊 Datos del dashboard cargados:", dashboardData);
+// Cargar datos de KPIs
+fetch("data/dashboard_data_final.json")
+  .then((r) => {
+    if (!r.ok) throw new Error("No existe el JSON");
+    return r.json();
+  })
+  .then((json) => {
+    json.forEach((item) => {
+      const codigo =
+        item["Sector_"] ||
+        item["Sector"] ||
+        item["SECTOR"] ||
+        item["COD_SECTOR"];
+
+      if (codigo) window.sectorDataMap[codigo] = item;
     });
-}
 
-// Buscar datos del sector
-function buscarDatosSector(feature) {
-  const codigo = feature.properties.Sector_;
-  return dashboardData.find(r => r["Sector_"] === codigo) || null;
-}
+    console.log("KPIs listos:", window.sectorDataMap);
+  })
+  .catch((err) => console.error("Error cargando datos:", err));

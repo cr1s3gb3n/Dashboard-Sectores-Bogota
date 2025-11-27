@@ -1,71 +1,124 @@
-console.log("🗺️ map.js cargado");
+import { generarExpresionColor } from "./shading3d.js";
+console.log("map.js cargado");
 
-let map = null;
-let capaSectores = null;
+let geojsonSectores = null;
+let indicadorActual = "Submedición";
 
-function crearMapaBase() {
-  map = L.map("map", { zoomControl: true })
-    .setView([4.6, -74.1], 12);
+// Crear mapa
+const map = new maplibregl.Map({
+  container: "map",
+  style: {
+    version: 8,
+    sources: {},
+    layers: [],
+  },
+  center: [-74.1, 4.65],
+  zoom: 9.7,
+  pitch: 60,
+  bearing: -20,
+});
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-  }).addTo(map);
+map.on("load", async () => {
+  console.log("Mapa cargado");
+
+  // ---------------------------------------
+  // Cargar GEOJSON REAL
+  // ---------------------------------------
+  const res = await fetch("data/sectores_3d.geojson");
+  geojsonSectores = await res.json();
+
+  // Crear SOURCE
+  map.addSource("sectores", {
+    type: "geojson",
+    data: geojsonSectores,
+  });
+
+  // Crear LAYER 3D
+  map.addLayer({
+    id: "sectores-3d",
+    type: "fill-extrusion",
+    source: "sectores",
+    paint: {
+      "fill-extrusion-height": [
+        "*",
+        ["number", ["get", "Shape_Area"], 1],
+        0.00001
+      ],
+      "fill-extrusion-color": "#aac",
+      "fill-extrusion-opacity": 0.95
+    }
+  });
+
+  // Aplicar primera vez
+  aplicarSombreado(indicadorActual);
+
+  // Click en sector
+  map.on("click", "sectores-3d", (e) => {
+    const props = e.features[0].properties;
+    const sector = props.Sector_ || props.COD_SECTOR;
+
+    document.getElementById("sector-actual").textContent = sector;
+
+    if (window.sectorDataMap[sector]) {
+      actualizarKPIs(window.sectorDataMap[sector]);
+    }
+  });
+
+  // Hover cursor
+  map.on("mouseenter", "sectores-3d", () =>
+    (map.getCanvas().style.cursor = "pointer")
+  );
+  map.on("mouseleave", "sectores-3d", () =>
+    (map.getCanvas().style.cursor = "")
+  );
+
+  activarEventosCoropletico();
+});
+
+// ---------------------------------------
+// FUNCIONES
+// ---------------------------------------
+
+function aplicarSombreado(indicador) {
+  if (!geojsonSectores) return;
+
+  const expr = generarExpresionColor(indicador, geojsonSectores);
+  map.setPaintProperty("sectores-3d", "fill-extrusion-color", expr);
+
+  console.log("Indicador aplicado:", indicador);
 }
 
-function cargarGeoJSON() {
-  return fetch("data/sectores.geojson")
-    .then(res => res.json())
-    .then(geojson => {
-      capaSectores = L.geoJSON(geojson, {
-        style: estiloBase,
-        onEachFeature: (feature, layer) => {
-          const codigo = feature.properties.Sector_ || "Sin código";
-          const data = buscarDatosSector(feature);
-
-          layer.bindPopup(`<strong>Sector ${codigo}</strong>`);
-
-          layer.on("click", () => {
-            actualizarSectorSeleccionado(codigo);
-            actualizarKPIs(data || {});
-
-            window.datosSectorSeleccionado = {
-              codigo,
-              ...(data || {})
-            };
-
-            if (typeof window.renderCharts === "function") {
-              window.renderCharts(window.datosSectorSeleccionado);
-            }
-
-            if (typeof shadingByIndicator === "function") {
-              shadingByIndicator(codigo);
-            }
-          });
-        }
-      }).addTo(map);
-
-      console.log("🟩 GeoJSON cargado");
+function activarEventosCoropletico() {
+  document.querySelectorAll(".legend-row").forEach((row) => {
+    row.addEventListener("click", () => {
+      indicadorActual = row.dataset.indicador;
+      aplicarSombreado(indicadorActual);
     });
+  });
 }
 
-function estiloBase(feature) {
-  const data = buscarDatosSector(feature);
-  const p = data ? Number(data["Pérdidas Totales (Mm³/año)"] || 0) : 0;
+function actualizarKPIs(data) {
+  document.getElementById("kpi-ve").textContent =
+    data["VE (Mm³/año)"]?.toFixed(2) ?? "--";
 
-  return {
-    color: "#0b7285",
-    weight: 1,
-    fillColor: getColorPerdida(p),
-    fillOpacity: 0.45,
-  };
+  document.getElementById("kpi-pt").textContent =
+    data["Pérdidas Totales (Mm³/año)"]?.toFixed(2) ?? "--";
+
+  document.getElementById("kpi-pa").textContent =
+    data["Pérdidas Aparentes (Mm³/año)"]?.toFixed(2) ?? "--";
+
+  document.getElementById("kpi-pr").textContent =
+    data["Pérdidas Técnicas (Mm³/año)"]?.toFixed(2) ?? "--";
+
+  document.getElementById("kpi-amsi").textContent =
+    data["AMSI"]?.toFixed(2) ?? "--";
+
+  document.getElementById("kpi-uarl").textContent =
+    data["UARL"]?.toFixed(2) ?? "--";
+
+  document.getElementById("kpi-ili").textContent =
+    data["ILI"]?.toFixed(2) ?? "--";
+
+  document.getElementById("kpi-ipuf").textContent =
+    data["IPUF"]?.toFixed(2) ?? "--";
 }
-
-function getColorPerdida(p) {
-  if (p >= 40) return "#b2182b";
-  if (p >= 30) return "#ef8a62";
-  if (p >= 20) return "#fddbc7";
-  if (p > 0) return "#d1e5f0";
-  return "#ffffff00";
-}
-
-console.log("🗺️ map.js listo");

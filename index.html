@@ -1,170 +1,101 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mapa de Sectores – Dashboard EAAB-Uniandes</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard EAAB-Uniandes</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <!-- MapLibre -->
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.css">
+  <script src="https://unpkg.com/maplibre-gl@3.6.0/dist/maplibre-gl.js"></script>
+
+  <!-- Estilos -->
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
 
-  <!-- Texto cinematográfico inicial -->
-  <div id="intro-text">Cargando Dashboard EAAB – Uniandes…</div>
-
-  <!-- Logos institucionales -->
-  <div id="logos-container">
-    <img src="assets/img/logo_andes.png" class="logo logo-andes" />
-    <img src="assets/img/logo_eaab.jpg" class="logo logo-eaab" />
+  <!-- LOGOS -->
+  <div class="logo-container">
+    <div class="logo-box">
+      <img src="assets/img/logo_andes.png" class="cine-logo">
+      <img src="assets/img/logo_eaab.jpg" class="cine-logo">
+    </div>
   </div>
 
-  <!-- PANEL LATERAL CORRECTO -->
-  <div id="panel" class="panel">
+  <div id="layout">
 
-<!-- Título principal del mapa -->
-<h4 id="sector-header" class="sector-header">
-  Mapa Coroplético:
-  <span id="toggle-indicadores" class="toggle-arrow">▶</span>
-</h4>
+    <!-- MAPA -->
+    <div id="map"></div>
 
-<!-- CONTENEDOR DESPLEGABLE (acordeón) -->
-<div id="indicadores-wrapper" class="indicadores-wrapper collapsed">
+    <!-- PANEL LATERAL -->
+    <aside id="panel">
 
-  <h4>Sombrear por indicador</h4>
+      <h3 id="titulo-panel">
+        Mapa Coroplético:
+        <span id="toggle-coropletico" class="flecha">▼</span>
+      </h3>
 
-  <div id="sombrear-opciones">
+      <!-- OPCIONES -->
+      <div id="coropletico-opciones">
+        <h4>Sombrear por indicador</h4>
 
-    <div class="legend-row" data-indicador="Submedición (Mm³/año)">
-      <div class="legend-dot" style="background:#2b8cbe"></div>
-      <span>Submedición</span>
-    </div>
+        <div class="legend-row" data-indicador="Submedición">
+          <div class="legend-dot" style="background:#2b8cbe"></div> Submedición
+        </div>
 
-    <div class="legend-row" data-indicador="Errores en el manejo de datos (Mm³/año)">
-      <div class="legend-dot" style="background:#fdae61"></div>
-      <span>Errores / Fallas de catastro</span>
-    </div>
+        <div class="legend-row" data-indicador="Errores / Fallas de catastro">
+          <div class="legend-dot" style="background:#fdae61"></div> Errores / Fallas de catastro
+        </div>
 
-    <div class="legend-row" data-indicador="Consumo no autorizado (Mm³/año)">
-      <div class="legend-dot" style="background:#1a9850"></div>
-      <span>Consumo no autorizado</span>
-    </div>
+        <div class="legend-row" data-indicador="Consumo no autorizado">
+          <div class="legend-dot" style="background:#1a9850"></div> Consumo no autorizado
+        </div>
 
-    <div class="legend-row" data-indicador="Pérdidas técnicas (Mm³/año)">
-      <div class="legend-dot" style="background:#d73027"></div>
-      <span>Fugas técnicas</span>
-    </div>
+        <div class="legend-row" data-indicador="Fugas técnicas">
+          <div class="legend-dot" style="background:#d73027"></div> Fugas técnicas
+        </div>
 
-    <div class="legend-row" data-indicador="AMSI">
-      <div class="legend-dot" style="background:#6a51a3"></div>
-      <span>AMSI</span>
-    </div>
-
-  </div>
-</div>
-
-<!-- Sector seleccionado (esto VA DESPUÉS del acordeón) -->
-<!-- Tarjeta: Sector Seleccionado -->
-<div class="sector-card">
-  <div class="sector-card-title">Sector seleccionado</div>
-  <div id="sector-actual" class="sector-card-value">Ninguno</div>
-</div>
-
-
-
-
-
-    <!-- TABS -->
-    <div id="tabs">
-      <button class="tab active" data-tab="info">Información</button>
-      <button class="tab" data-tab="geo">Geográfico</button>
-    </div>
-
-    <!-- CONTENIDO DE TABS -->
-    <div id="tab-content">
-
-      <!-- Panel Información -->
-      <div class="tab-panel" id="tab-info">
-        <h4>Indicadores del Sector</h4>
-
-        <div id="kpi-container">
-
-          <div class="kpi">
-            <span class="kpi-label">VE (Mm³/año)</span>
-            <span class="kpi-value" id="kpi-ve">--</span>
-          </div>
-
-          <div class="kpi">
-            <span class="kpi-label">Pérdidas Totales (%)</span>
-            <span class="kpi-value" id="kpi-pt">--</span>
-          </div>
-
-          <div class="kpi">
-            <span class="kpi-label">Pérdidas Aparentes (Mm³/año)</span>
-            <span class="kpi-value" id="kpi-pa">--</span>
-          </div>
-
-          <div class="kpi">
-            <span class="kpi-label">Pérdidas Técnicas (Mm³/año)</span>
-            <span class="kpi-value" id="kpi-pr">--</span>
-          </div>
-
-          <div class="kpi">
-            <span class="kpi-label">AMSI</span>
-            <span class="kpi-value" id="kpi-amsi">--</span>
-          </div>
-
-          <div class="kpi">
-            <span class="kpi-label">UARL</span>
-            <span class="kpi-value" id="kpi-uarl">--</span>
-          </div>
-
-          <div class="kpi">
-            <span class="kpi-label">ILI</span>
-            <span class="kpi-value" id="kpi-ili">--</span>
-          </div>
-
-          <div class="kpi">
-            <span class="kpi-label">IPUF</span>
-            <span class="kpi-value" id="kpi-ipuf">--</span>
-          </div>
-
+        <div class="legend-row" data-indicador="AMSI">
+          <div class="legend-dot" style="background:#6a51a3"></div> AMSI
         </div>
       </div>
 
-      <!-- Panel Geográfico (GRÁFICAS AQUÍ) -->
-      <div class="tab-panel hidden" id="tab-geo">
-        <div id="charts-container">
-          <div id="charts-container">
-  <canvas id="stackedBars"></canvas>
-  <canvas id="donutChart" style="margin-top:20px;"></canvas>
-</div>
-
-        </div>
+      <div id="sector-box">
+        <label>Sector seleccionado</label>
+        <div id="sector-actual">Ninguno</div>
       </div>
 
-    </div> <!-- FIN DE tab-content -->
+      <!-- TABS -->
+      <div id="tabs">
+        <button class="tab active" data-tab="info">Información</button>
+        <button class="tab" data-tab="geo">Geográfico</button>
+      </div>
 
-  </div> <!-- FIN DEL PANEL -->
+      <div id="tab-info" class="tab-content active">
+        <div class="kpi"><label>VE (Mm³/año)</label><div id="kpi-ve">--</div></div>
+        <div class="kpi"><label>Pérdidas Totales (%)</label><div id="kpi-pt">--</div></div>
+        <div class="kpi"><label>Pérdidas Aparentes</label><div id="kpi-pa">--</div></div>
+        <div class="kpi"><label>Pérdidas Técnicas</label><div id="kpi-pr">--</div></div>
+        <div class="kpi"><label>AMSI</label><div id="kpi-amsi">--</div></div>
+        <div class="kpi"><label>UARL</label><div id="kpi-uarl">--</div></div>
+        <div class="kpi"><label>ILI</label><div id="kpi-ili">--</div></div>
+        <div class="kpi"><label>IPUF</label><div id="kpi-ipuf">--</div></div>
+      </div>
 
-  <!-- MAPA -->
-  <div id="map"></div>
+      <div id="tab-geo" class="tab-content">
+        Datos geográficos disponibles próximamente.
+      </div>
+    </aside>
 
-  <!-- SCRIPTS (ORDEN CORRECTO) -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  </div>
 
-<script src="assets/js/data.js"></script>
-<script src="assets/js/popup.js"></script>
-<script src="assets/js/shading.js"></script>
-<script src="assets/js/tabs.js"></script>
-<script src="assets/js/charts.js"></script>
-<script src="assets/js/animation.js"></script>
-<script src="assets/js/map.js"></script>
-
-<script src="assets/js/app.js"></script>
-
+  <!-- JS -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/popup.js"></script>
+  <script src="assets/js/tabs.js"></script>
+  <script src="assets/js/shading3d.js" type="module"></script>
+  <script src="assets/js/map.js" type="module"></script>
 
 </body>
 </html>
