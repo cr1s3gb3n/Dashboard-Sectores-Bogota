@@ -58,6 +58,24 @@
   cursor: pointer;
 }
 
+/* Collapsible container for coropletico options */
+#coropletico-opciones {
+  max-height: 1000px; /* large enough */
+  overflow: hidden;
+  transition: max-height 280ms ease;
+}
+
+#coropletico-opciones.collapsed {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Sector dropdown */
+#sector-dropdown.hidden { display: none; }
+#sector-list li { padding: 6px; cursor: pointer; border-radius:4px; }
+#sector-list li:hover { background:#f0f8ff; }
+
 .legend-dot {
   width: 14px;
   height: 14px;

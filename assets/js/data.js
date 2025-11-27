@@ -21,5 +21,7 @@ fetch("data/dashboard_data_final.json")
     });
 
     console.log("KPIs listos:", window.sectorDataMap);
+    // notify other scripts that sector data is ready
+    try { window.dispatchEvent(new CustomEvent('sectorDataReady')); } catch(e) {}
   })
   .catch((err) => console.error("Error cargando datos:", err));

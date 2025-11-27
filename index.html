@@ -67,8 +67,20 @@
       </div>
 
       <div id="sector-box">
-        <label>Sector seleccionado</label>
-        <div id="sector-actual">Ninguno</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div>
+            <label>Sector seleccionado</label>
+            <div id="sector-actual">Ninguno</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button id="sector-toggle" aria-expanded="false" style="background:#f0f6fb;border:1px solid #d7eaf8;padding:6px;border-radius:6px;cursor:pointer;">
+              <svg width="14" height="14" viewBox="0 0 20 20"><polyline points="6 8 10 12 14 8" fill="none" stroke="#0077c8" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="sector-dropdown" class="hidden" style="margin-top:8px;">
+          <ul id="sector-list" style="list-style:none;margin:0;padding:6px;border:1px solid #eee;border-radius:6px;max-height:220px;overflow:auto;background:#fff;"></ul>
+        </div>
       </div>
 
       <!-- TABS -->
@@ -112,6 +124,7 @@
   <!-- JS -->
   <script src="assets/js/data.js"></script>
   <script src="assets/js/popup.js"></script>
+  <script src="assets/js/app.js"></script>
   <!-- Chart.js (UMD) required by charts.js which uses global `Chart` -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
   <!-- tabs.js imports ./charts.js so must be loaded as a module -->

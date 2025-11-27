@@ -57,17 +57,63 @@ document.addEventListener("DOMContentLoaded", () => {
   const flechaSvg = document.getElementById("flecha-svg");
   const opciones = document.getElementById("coropletico-opciones");
   if (flecha && opciones && flechaSvg) {
+    // ensure initial expanded state
+    opciones.classList.remove('collapsed');
+    flechaSvg.style.transform = 'rotate(0deg)';
+
     flecha.addEventListener("click", () => {
-      if (opciones.style.display === "none" || opciones.style.display === "") {
-        opciones.style.display = "block";
-        flechaSvg.style.transform = "rotate(0deg)";
+      const collapsed = opciones.classList.toggle('collapsed');
+      if (collapsed) {
+        // collapsed -> rotate arrow 90deg to point right
+        flechaSvg.style.transform = 'rotate(90deg)';
       } else {
-        opciones.style.display = "none";
-        flechaSvg.style.transform = "rotate(-90deg)";
+        // expanded -> point down
+        flechaSvg.style.transform = 'rotate(0deg)';
       }
     });
-    opciones.style.display = "block";
-    flechaSvg.style.transform = "rotate(0deg)";
+  }
+
+  // --- Sector dropdown population & handlers ---
+  const sectorToggle = document.getElementById('sector-toggle');
+  const sectorDropdown = document.getElementById('sector-dropdown');
+  const sectorList = document.getElementById('sector-list');
+  const sectorActual = document.getElementById('sector-actual');
+
+  function populateSectorList() {
+    if (!sectorList || !window.sectorDataMap) return;
+    sectorList.innerHTML = '';
+    const codes = Object.keys(window.sectorDataMap).sort();
+    codes.forEach(code => {
+      const li = document.createElement('li');
+      li.textContent = code;
+      li.addEventListener('click', () => {
+        // select sector
+        sectorActual.textContent = code;
+        const data = window.sectorDataMap[code];
+        try { window.actualizarKPIs && window.actualizarKPIs(data); } catch(e){}
+        try { window.renderPieFugas && window.renderPieFugas(data); } catch(e){}
+        try { window.renderDoubleStackedBars && window.renderDoubleStackedBars(data); } catch(e){}
+        try { window.highlightSector && window.highlightSector(code); } catch(e){}
+        // close dropdown
+        if (sectorDropdown) sectorDropdown.classList.add('hidden');
+        if (sectorToggle) sectorToggle.setAttribute('aria-expanded','false');
+      });
+      sectorList.appendChild(li);
+    });
+  }
+
+  // Listen for data ready event
+  window.addEventListener('sectorDataReady', populateSectorList);
+
+  // If data already loaded before this script, populate now
+  if (window.sectorDataMap && Object.keys(window.sectorDataMap).length) populateSectorList();
+
+  if (sectorToggle) {
+    sectorToggle.addEventListener('click', () => {
+      if (!sectorDropdown) return;
+      const open = sectorDropdown.classList.toggle('hidden');
+      sectorToggle.setAttribute('aria-expanded', String(!open));
+    });
   }
 });
 

@@ -10,6 +10,14 @@ function safeGetCtx(id) {
     return el.getContext("2d");
 }
 
+// Expose functions to non-module scripts (app.js) via window
+try {
+    window.renderPieFugas = renderPieFugas;
+    window.renderDoubleStackedBars = renderDoubleStackedBars;
+} catch (e) {
+    // ignore in environments where window is not available
+}
+
 
 
 export function renderPieFugas(data) {

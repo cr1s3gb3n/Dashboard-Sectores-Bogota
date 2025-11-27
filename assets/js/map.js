@@ -50,6 +50,30 @@ map.on("load", async () => {
     }
   });
 
+  // Añadir capa de contorno (inicialmente sin coincidencia)
+  map.addLayer({
+    id: 'sectores-outline',
+    type: 'line',
+    source: 'sectores',
+    paint: {
+      'line-color': '#000',
+      'line-width': 2
+    },
+    filter: ['==', ['get', 'Sector_'], '___NONE___']
+  });
+
+  // Exponer función para resaltar sector desde otros scripts
+  window.highlightSector = function(code) {
+    if (!map.getLayer('sectores-outline')) return;
+    // Primero intentar con propiedad 'Sector_'
+    map.setFilter('sectores-outline', ['==', ['get', 'Sector_'], String(code)]);
+    // Si no hay coincidencia, intentar con 'COD_SECTOR'
+    const matched = geojsonSectores.features.some(f => String(f.properties.Sector_) === String(code));
+    if (!matched) {
+      map.setFilter('sectores-outline', ['==', ['get', 'COD_SECTOR'], String(code)]);
+    }
+  };
+
   // Aplicar primera vez
   aplicarSombreado(indicadorActual);
 
@@ -70,6 +94,15 @@ map.on("load", async () => {
       } catch (err) {
         console.warn('No se pudo renderizar gráficos del sector:', err);
       }
+      // Close sector dropdown if open
+      try {
+        const sd = document.getElementById('sector-dropdown');
+        const st = document.getElementById('sector-toggle');
+        if (sd && !sd.classList.contains('hidden')) sd.classList.add('hidden');
+        if (st) st.setAttribute('aria-expanded','false');
+      } catch (e) {}
+      // Highlight on map
+      try { window.highlightSector && window.highlightSector(sector); } catch(e) {}
     }
   });
 
