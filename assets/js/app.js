@@ -25,6 +25,55 @@ document.addEventListener("DOMContentLoaded", () => {
     if (intro) intro.style.display = "none";
     if (logos) logos.style.display = "none";
   }, 2600);
+  // loading overlay coordination
+  window._dashboardLoading = { map: false, data: false };
+  function tryHideLoading() {
+    const st = window._dashboardLoading;
+    if (st.map && st.data) {
+      const ov = document.getElementById('loading-overlay');
+      if (ov) {
+        ov.classList.add('loading-hidden');
+        setTimeout(() => { ov.style.display = 'none'; }, 350);
+        // reveal right panel with a slide-in animation
+        try {
+          const panel = document.getElementById('panel');
+          if (panel) {
+            panel.classList.remove('panel-hidden');
+            panel.classList.add('panel-visible');
+            // reveal KPI cards one by one
+            try {
+              const kpis = Array.from(panel.querySelectorAll('.kpi'));
+              kpis.forEach((el, i) => {
+                setTimeout(() => el.classList.add('kpi-show'), 220 + i * 140);
+              });
+            } catch (e) {}
+          }
+        } catch (e) {}
+      }
+    }
+  }
+  // listen for map and data readiness
+  window.addEventListener('mapReady', () => {
+    window._dashboardLoading.map = true;
+    tryHideLoading();
+  });
+  window.addEventListener('sectorDataReady', () => {
+    window._dashboardLoading.data = true;
+    tryHideLoading();
+  });
+  // If data was loaded before DOMContentLoaded, mark it ready now
+  if (window.sectorDataMap && Object.keys(window.sectorDataMap).length) {
+    window._dashboardLoading.data = true;
+  }
+  // fallback: if not ready after 15s, hide overlay to allow user to interact
+  setTimeout(() => {
+    const ov = document.getElementById('loading-overlay');
+    if (ov && !ov.classList.contains('loading-hidden')) {
+      console.warn('Fallback: hiding loading overlay after timeout');
+      ov.classList.add('loading-hidden');
+      setTimeout(() => { ov.style.display = 'none'; }, 350);
+    }
+  }, 15000);
 });
 
 
@@ -56,20 +105,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const flecha = document.getElementById("toggle-coropletico");
   const flechaSvg = document.getElementById("flecha-svg");
   const opciones = document.getElementById("coropletico-opciones");
-  if (flecha && opciones && flechaSvg) {
-    // ensure initial expanded state
-    opciones.classList.remove('collapsed');
-    flechaSvg.style.transform = 'rotate(0deg)';
-
-    flecha.addEventListener("click", () => {
+  // New simpler toggle: the header contains a button `#coropletico-toggle-btn`
+  const corButton = document.getElementById('coropletico-toggle-btn');
+  if (corButton && opciones) {
+    // start collapsed so the button toggles to open on first click
+    opciones.classList.add('collapsed');
+    corButton.setAttribute('aria-expanded', 'false');
+    corButton.classList.remove('active');
+    corButton.addEventListener('click', (ev) => {
       const collapsed = opciones.classList.toggle('collapsed');
-      if (collapsed) {
-        // collapsed -> rotate arrow 90deg to point right
-        flechaSvg.style.transform = 'rotate(90deg)';
-      } else {
-        // expanded -> point down
-        flechaSvg.style.transform = 'rotate(0deg)';
-      }
+      // when collapsed === true -> hidden, so aria-expanded should be false
+      corButton.setAttribute('aria-expanded', String(!collapsed));
+      corButton.classList.toggle('active', !collapsed);
     });
   }
 

@@ -18,6 +18,15 @@
 
 <body>
 
+  <!-- Loading overlay -->
+  <div id="loading-overlay">
+    <div class="loader-box">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="loader-text">Cargando DashBoard EAAB - Uniandes</div>
+      <div class="loader-subtext">Cargando datos...</div>
+    </div>
+  </div>
+
   <!-- LOGOS -->
   <div class="logo-container">
     <div class="logo-box">
@@ -32,13 +41,10 @@
     <div id="map"></div>
 
     <!-- PANEL LATERAL -->
-    <aside id="panel">
-
+    <aside id="panel" class="panel-hidden">
+      <div class="panel-inner">
       <h3 id="titulo-panel">
-        Mapa Coroplético:
-        <span id="toggle-coropletico" class="flecha" style="display:inline-block;transition:transform 0.2s;vertical-align:middle;cursor:pointer;">
-          <svg id="flecha-svg" width="18" height="18" viewBox="0 0 20 20"><polyline points="6 8 10 12 14 8" fill="none" stroke="#0077c8" stroke-width="2" stroke-linecap="round"/></svg>
-        </span>
+        <button id="coropletico-toggle-btn" class="coropletico-btn" aria-expanded="true" aria-controls="coropletico-opciones">Mapa Coroplético</button>
       </h3>
 
       <!-- OPCIONES -->
@@ -90,14 +96,85 @@
       </div>
 
       <div id="tab-info" class="tab-content active">
-        <div class="kpi"><label>VE (Mm³/año)</label><div id="kpi-ve">--</div></div>
-        <div class="kpi"><label>Pérdidas Totales (%)</label><div id="kpi-pt">--</div></div>
-        <div class="kpi"><label>Pérdidas Aparentes</label><div id="kpi-pa">--</div></div>
-        <div class="kpi"><label>Pérdidas Técnicas</label><div id="kpi-pr">--</div></div>
-        <div class="kpi"><label>AMSI</label><div id="kpi-amsi">--</div></div>
-        <div class="kpi"><label>UARL</label><div id="kpi-uarl">--</div></div>
-        <div class="kpi"><label>ILI</label><div id="kpi-ili">--</div></div>
-        <div class="kpi"><label>IPUF</label><div id="kpi-ipuf">--</div></div>
+        <div class="kpi" data-key="VE (Mm³/año)">
+          <div class="kpi-row">
+            <label>VE (Mm³/año)</label>
+            <div class="kpi-value" id="kpi-ve">--</div>
+          </div>
+          <div class="kpi-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="kpi-fill" id="kpi-fill-ve" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="kpi" data-key="Pérdidas Totales (Mm³/año)">
+          <div class="kpi-row">
+            <label>Pérdidas Totales (%)</label>
+            <div class="kpi-value" id="kpi-pt">--</div>
+          </div>
+          <div class="kpi-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="kpi-fill" id="kpi-fill-pt" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="kpi" data-key="Pérdidas Aparentes (Mm³/año)">
+          <div class="kpi-row">
+            <label>Pérdidas Aparentes</label>
+            <div class="kpi-value" id="kpi-pa">--</div>
+          </div>
+          <div class="kpi-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="kpi-fill" id="kpi-fill-pa" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="kpi" data-key="Pérdidas Técnicas (Mm³/año)">
+          <div class="kpi-row">
+            <label>Pérdidas Técnicas</label>
+            <div class="kpi-value" id="kpi-pr">--</div>
+          </div>
+          <div class="kpi-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="kpi-fill" id="kpi-fill-pr" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="kpi" data-key="AMSI">
+          <div class="kpi-row">
+            <label>AMSI</label>
+            <div class="kpi-value" id="kpi-amsi">--</div>
+          </div>
+          <div class="kpi-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="kpi-fill" id="kpi-fill-amsi" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="kpi" data-key="UARL">
+          <div class="kpi-row">
+            <label>UARL</label>
+            <div class="kpi-value" id="kpi-uarl">--</div>
+          </div>
+          <div class="kpi-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="kpi-fill" id="kpi-fill-uarl" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="kpi" data-key="ILI">
+          <div class="kpi-row">
+            <label>ILI</label>
+            <div class="kpi-value" id="kpi-ili">--</div>
+          </div>
+          <div class="kpi-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="kpi-fill" id="kpi-fill-ili" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="kpi" data-key="IPUF">
+          <div class="kpi-row">
+            <label>IPUF</label>
+            <div class="kpi-value" id="kpi-ipuf">--</div>
+          </div>
+          <div class="kpi-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="kpi-fill" id="kpi-fill-ipuf" style="width:0%"></div>
+          </div>
+        </div>
       </div>
 
       <div id="tab-geo" class="tab-content">

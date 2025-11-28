@@ -5,6 +5,24 @@
   font-family: Arial, sans-serif;
 }
 
+./* Loading overlay */
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* translucent dark so the cinematic map is visible underneath */
+  background: rgba(0,0,0,0.35);
+  z-index: 99999;
+}
+.loader-box { display:flex; flex-direction:column; align-items:center; gap:12px; }
+.loader-text { font-size:18px; color:#fff; font-weight:700; }
+.spinner { width:48px; height:48px; border-radius:50%; border:5px solid rgba(255,255,255,0.18); border-top-color: #fff; animation: spin 1s linear infinite; }
+.loader-subtext { font-size:14px; color: rgba(255,255,255,0.9); font-weight:500; font-style:italic; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-hidden { opacity:0; visibility:hidden; transition: opacity 300ms ease, visibility 300ms; }
+
 /* Layout */
 #layout {
   display: grid;
@@ -16,16 +34,84 @@
 #map {
   width: 100%;
   height: 100%;
+  position: relative;
 }
+
+/* Base layer toggle control */
+.map-base-toggle {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: auto;
+  z-index: 1000;
+}
+.map-base-toggle button {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.12);
+  padding: 6px;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.map-base-toggle button:hover { background: rgba(250,250,250,1); }
+.map-base-toggle button svg { display: block; margin: 0 auto; color: #333; }
+.map-base-control { position: relative; }
+.base-list { display: none; position: absolute; left: 0; top: 44px; min-width: 150px; background: white; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 6px 18px rgba(0,0,0,0.08); border-radius: 6px; padding: 6px 0; list-style:none; margin:0; z-index:1200; }
+.base-list.open { display: block; }
+.base-list li { padding: 8px 12px; cursor: pointer; white-space: nowrap; }
+.base-list li:hover { background: #f3f7fb; }
+.base-list li.unavailable { color: #9aa7b7; pointer-events: none; }
+
+/* Attribution display */
+.map-attribution { position: absolute; left: 8px; bottom: 6px; background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: 4px; font-size: 11px; color: #222; z-index: 1000; max-width: 320px; }
+
+/* View control removed; rotation now handled with Alt+drag */
 
 /* Panel lateral */
 #panel {
-  background: white;
+  background: transparent; /* transparent while cinematic; visible style is applied via .panel-visible */
   padding: 15px;
-  border-left: 3px solid #0b8bd9;
   overflow-y: auto;
   max-height: 100vh;
 }
+
+/* Hidden panel during cinematic - will slide/fade in when ready */
+.panel-hidden {
+  /* glass panel showing the map behind; content hidden */
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  box-shadow: 0 12px 34px rgba(0,0,0,0.18);
+  backdrop-filter: blur(6px) saturate(120%);
+  border-left: 1px solid rgba(255,255,255,0.08);
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: none;
+}
+.panel-hidden .panel-inner { opacity: 0; transform: translateY(8px); transition: opacity 360ms ease, transform 360ms ease; }
+.panel-visible {
+  /* full white panel with accent border */
+  background: #ffffff;
+  border-left: 3px solid #0b8bd9;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
+}
+.panel-visible .panel-inner { opacity: 1; transform: translateY(0); transition: opacity 420ms ease, transform 420ms ease; }
+
+/* KPI reveal animation (staggered by JS) */
+.kpi { opacity: 0; transform: translateY(8px); transition: opacity 360ms ease, transform 360ms ease; }
+.kpi.kpi-show { opacity: 1; transform: translateY(0); }
+
+/* KPI row: label and numeric value */
+.kpi-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.kpi-value { font-weight: 700; color: #0b6fb0; font-size: 1.05rem; }
+
+/* Horizontal progress bar that fills from right to left */
+.kpi-bar { position: relative; height: 12px; background: #f1f8ff; border-radius: 8px; overflow: hidden; }
+.kpi-fill { position: absolute; top: 0; bottom: 0; right: 0; width: 0%; background: linear-gradient(90deg,#8cc8f2 0%,#5aaee8 100%); border-radius: 8px; transition: width 420ms cubic-bezier(.2,.9,.2,1); }
+.kpi-bar[aria-valuenow] { /* accessible hook */ }
 
 /* Logos */
 .logo-container {
@@ -57,6 +143,20 @@
   padding: 5px;
   cursor: pointer;
 }
+
+/* Coroplético header as a button */
+.coropletico-btn {
+  display: inline-block;
+  background: #f0f8ff;
+  border: 1px solid rgba(11,139,217,0.15);
+  color: #0969b3;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.coropletico-btn.active { background: #e6f4ff; box-shadow: inset 0 -2px 0 rgba(11,139,217,0.06); }
+.coropletico-btn:focus { outline: 2px solid rgba(11,139,217,0.18); outline-offset: 2px; }
 
 /* Collapsible container for coropletico options */
 #coropletico-opciones {
