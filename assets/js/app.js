@@ -127,6 +127,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const sectorActual = document.getElementById('sector-actual');
 
   function populateSectorList() {
+        // Comparativo: llenar el select con los sectores
+        const comparativoSelect = document.getElementById('comparativo-sector-select');
+        if (comparativoSelect) {
+          comparativoSelect.innerHTML = '<option value="">Seleccione un sector...</option>';
+          const codes = Object.keys(window.sectorDataMap).sort();
+          codes.forEach(code => {
+            const opt = document.createElement('option');
+            opt.value = code;
+            opt.textContent = code;
+            comparativoSelect.appendChild(opt);
+          });
+        }
     if (!sectorList || !window.sectorDataMap) return;
     sectorList.innerHTML = '';
     const codes = Object.keys(window.sectorDataMap).sort();

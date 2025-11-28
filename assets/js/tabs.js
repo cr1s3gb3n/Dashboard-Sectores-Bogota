@@ -5,7 +5,6 @@ const contents = document.querySelectorAll(".tab-content");
 
 tabs.forEach(tab => {
     tab.addEventListener("click", () => {
-
         // Quitar active
         tabs.forEach(t => t.classList.remove("active"));
         contents.forEach(c => c.classList.remove("active"));
@@ -13,10 +12,13 @@ tabs.forEach(tab => {
         // Activar nueva tab
         tab.classList.add("active");
         const target = tab.dataset.tab;
+        contents.forEach(c => {
+            c.style.display = "none";
+        });
         const panel = document.getElementById(`tab-${target}`);
-
         if (panel) {
             panel.classList.add("active");
+            panel.style.display = "block";
         }
 
         // 🔥 Cuando la pestaña es "geo": renderizar dos barras apiladas y un pie
@@ -60,8 +62,7 @@ tabs.forEach(tab => {
                     errores: agg.errores,
                     cna: agg.cna
                 });
-
-            }, 150);
+            }, 120);
         }
     });
 });
